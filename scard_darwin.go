@@ -124,8 +124,9 @@ func scardTransmit(card uintptr, proto Protocol, cmd []byte, rsp []byte) (uint32
 	case ProtocolT0, ProtocolT1:
 		sendpci.dwProtocol = C.uint32_t(proto)
 	default:
-		panic("unknown protocol")
+		return 0, Error(C.SCARD_F_INTERNAL_ERROR)
 	}
+
 	sendpci.cbPciLength = C.sizeof_SCARD_IO_REQUEST
 
 	r := C.SCardTransmit(C.SCARDHANDLE(card), &sendpci, (*C.uchar)(&cmd[0]), C.uint32_t(len(cmd)), &recvpci, (*C.uchar)(&rsp[0]), &rspLen)
